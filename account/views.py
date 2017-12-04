@@ -12,10 +12,13 @@ def register_user(request):
         form = UserCreationForm(request.POST or None)
         if form.is_valid():
             form.save()
-            newuser = auth.authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
-            auth.login(request, newuser)
+            new_user = auth.authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
+            auth.login(request, new_user)
             return redirect('/account/login/')
-    return render(request, 'register.html', context)
+        else:
+            messages.error(request, "Ошибка сервера")
+    else:    
+        return render(request, 'register.html', context)
 
 
 def authorization_user(request):
@@ -28,7 +31,8 @@ def authorization_user(request):
             return redirect('/main/')
         else:
             return redirect('/account/login/')
-    return render(request, 'login.html')
+    else:    
+        return render(request, 'login.html')
 
 
 def logout_user(request):

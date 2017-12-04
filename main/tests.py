@@ -23,7 +23,7 @@ class ViewTest(TestCase):
             'url': 'www',
             'description': 'df'
         }
-        self.userValidVData = {
+        self.user_valid_data = {
             'login': 'denisoed',
             'password': 'gorod312'
         }
@@ -32,23 +32,23 @@ class ViewTest(TestCase):
         responce = self.client.get('http://127.0.0.1:8000/main/')
         self.assertEqual(responce.status_code, 200)
 
-        self.assertTemplateUsed('template.html')
+        self.assertTemplateUsed('index.html')
 
     def test_check_data(self):
         responce = self.client.post('/main/', self.input_data, follow=True)
-        self.assertTemplateUsed('template.html')
+        self.assertTemplateUsed('index.html')
         self.assertContains(responce, 'Error', 0)
 
     def test_empty_data(self):
         responce = self.client.post('/main/', self.empty_data, follow=True)
-        self.assertTemplateUsed('template.html')
+        self.assertTemplateUsed('index.html')
 
     def test_length_of_data(self):
         responce = self.client.post('/main/', self.small_data, follow=True)
-        self.assertTemplateUsed('template.html')
+        self.assertTemplateUsed('index.html')
 
     def test_for_check_authentification(self):
-        responce = self.client.post('/main/', self.userValidVData, follow=True)
+        responce = self.client.post('/main/', self.user_valid_data, follow=True)
 
 # class TestTasks(TestCase):
 #

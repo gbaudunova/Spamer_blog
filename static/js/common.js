@@ -6,32 +6,25 @@ const name_inp = document.getElementById('id_name');
 let list_portal_name = document.getElementById('portal_name');
 let list_portals = document.getElementById('list_portals');
 
-sel_portal.addEventListener('change', () => {
+sel_portal.addEventListener('change', function () {
     name_inp.value = this.value;
 }, false);
 
 list_portals.addEventListener('click', (e) => {
     let target = e.target;
     if (target.getAttribute("id") == 'portal_name') {
-        let a = target.innerHTML;
-        c = $(selected_portals).children()
-        if (c.length == 0) {
-            $(selected_portals).append(
-                `<input type="text" value="${a}" name="selected_portal">`
-            );
-        } else {
-            // Dev!
-            for (let i = 0; i < c.length; i++) {
-                if ($(c[i]).val() == a) {
-                    $(c[i]).remove();
-                } 
-                if ($(c[1]).val() != a) {
-                    $(selected_portals).append(
-                        `<input type="text" value="${a}" name="selected_portal">`
-                    );
-                }
+        let portal_name = target.innerHTML;
+        let availabel_portals = $(selected_portals).children()
+        console.log(availabel_portals);
+        for (let i = 0; i < availabel_portals.length; i++) {
+            if (availabel_portals[i].value == portal_name) {
+                $(availabel_portals[i]).remove()
+                return true;
+            } else {
+                $(selected_portals).append(
+                    `<input type="text" value="${portal_name}" name="selected_portal">`
+                );
             }
-            // End Dev
         }
     }
 }, false);

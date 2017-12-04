@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import auth
-from .tasks import send_spam
+from portal.tasks import send_spam
 from portal.forms import PortalForm
 from portal.models import Portal
 
@@ -36,4 +36,4 @@ def catch_data(request):
 
             send_spam(input_data, portals)
             return redirect('/main/')
-    return render(request, 'template.html', context)
+    return render(request, 'index.html', context)

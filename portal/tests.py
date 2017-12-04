@@ -5,7 +5,7 @@ from .forms import *
 from .models import *
 
 
-client = Client()
+_CLIENT = Client()
 
 
 class PortalTest(TestCase):
@@ -16,14 +16,14 @@ class PortalTest(TestCase):
         self.assertEqual(portal_models.user, 'user1')
 
     def test_creation(self):
-        w = self.create_portal()
-        self.assertTrue(isinstance(w, Portal))
-        self.assertEqual(w.__str__(), w.name)
+        new_portal = self.create_portal()
+        self.assertTrue(isinstance(new_portal, Portal))
+        self.assertEqual(new_portal.__str__(), new_portal.name)
 
 
 class User_Form_Test(TestCase):
 
-    def test_UserForm_valid(self):
+    def test_user_form_valid(self):
         form = PortalForm(data={'name': "us", 'user': "user"})
 
         self.assertTrue(form.is_valid())
@@ -32,13 +32,13 @@ class User_Form_Test(TestCase):
 class ViewTest(TestCase):
 
     def setUp(self):
-        self.client = Client()
-        self.userValidData = {
+        self._CLIENT = Client()
+        self.user_valid_data = {
             'login': 'login',
             'password': 'password'
 
         }
-        self.validData = {
+        self.valid_data = {
             'name': 'Reddit',
             'user': 'user1'
         }
@@ -48,46 +48,46 @@ class ViewTest(TestCase):
         }
 
     def test_for_connection(self):
-        response = self.client.get('https://127.0.0.1:8000/portal/create/')
+        response = self._CLIENT.get('https://127.0.0.1:8000/portal/create/')
 
-        self.assertTemplateUsed('template.html')
+        self.assertTemplateUsed('index.html')
 
         self.assertRedirects(response, '/main/', status_code=302, target_status_code=200)
 
     def test_for_auth_user(self):
         data = {'login': 'login_user', 'password': 'password_user'}
 
-        r = self.client.post(reverse('portal:create_portal'), data=data, follow=True)
+        response = self._CLIENT.post(reverse('portal:create_portal'), data=data, follow=True)
 
-        self.assertEqual(r.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_for_auth_user_using_wrong_data(self):
         wrong_data = {'login': 'L', 'password': ''}
 
-        resp = self.client.post(reverse('portal:create_portal'), data=wrong_data, follow=True)
+        response = self._CLIENT.post(reverse('portal:create_portal'), data=wrong_data, follow=True)
 
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_for_selected_portal(self):
-        r = self.client.post(reverse('portal:create_portal'), data=self.data)
+        response = self._CLIENT.post(reverse('portal:create_portal'), data=self.data)
 
-        self.assertEqual(r.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
-        self.assertRedirects(r, '/portal/create/', status_code=302, target_status_code=302)
+        self.assertRedirects(response, '/portal/create/', status_code=302, target_status_code=302)
 
     def test_if_portal_form_valid_should_return_text_portal_exists_in_your_list(self):
         portal_form = {'name': 'Golang news', 'user': 'admin'}
 
         portal_models = Portal.objects.create(name='Golang news', user='user1')
 
-        r = self.client.post(reverse('portal:create_portal'), data=portal_form)
+        response = self._CLIENT.post(reverse('portal:create_portal'), data=portal_form)
 
-        self.assertEqual(r.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
-        self.assertEqual(r.context, "Портал %s  уже существует в вашем списке!" % portal_form['name'])
+        self.assertEqual(response.context, "Портал %s  уже существует в вашем списке!" % portal_form['name'])
 
     # def test_for_create_portal_in_selected_portal(self):
-    #     r = self.client.post(reverse('portal:create_portal'), data=self.validData)
+    #     r = self._CLIENT.post(reverse('portal:create_portal'), data=self.valid_data)
     #     self.assertEqual(r.status_code, 302)
     #     self.assertRedirects(r, '/portal/create/', status_code=302, target_status_code=302)
 
@@ -95,11 +95,11 @@ class ViewTest(TestCase):
 
         data = {'login': 'login', 'password': '2323232'}
 
-        r = self.client.post(reverse('portal:delete_portal', kwargs={'id_portal': 1}), data=data)
+        response = self._CLIENT.post(reverse('portal:delete_portal', kwargs={'id_portal': 1}), data=data)
 
-        self.assertEqual(r.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
-        self.assertRedirects(r, '/main/', status_code=302, target_status_code=200)
+        self.assertRedirects(response, '/main/', status_code=302, target_status_code=200)
 
 
 

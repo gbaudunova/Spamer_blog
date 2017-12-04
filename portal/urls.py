@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from portal.views import create_portal, delete_portal
-from main.tasks import auth_portal
+from .tasks import auth_portal
 
 urlpatterns = [
     url(r'create/$', create_portal, name='create_portal'),

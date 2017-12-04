@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib import auth
 from .forms import PortalForm
 from .list_portals import list_portals
-from main.tasks import auth_portal
+from .tasks import auth_portal
 from .models import Portal
 
 
@@ -14,11 +14,7 @@ def create_portal(request):
             'login': request.POST.get('login'),
             'password': request.POST.get('password')
         }
-        for i in range(len(list_portals)):
-            if list_portals[i].get('name') == request.POST.get('portals'):
-                portal = list_portals[i]
-                #return HttpResponseRedirect('.')
-
+        portal = find_selected_portal(request)
         portal_form = PortalForm(request.POST or None)
         if portal_form.is_valid():
             create_new_portal = portal_form.save(commit=False)
@@ -33,10 +29,16 @@ def create_portal(request):
                     create_new_portal.save()
                     return redirect('/main/')
         else:
-            return HttpResponseRedirect('.')
+            messages.error(request, "Форма не валидна")
+            return redirect('/main/')
     else:
-        return HttpResponseRedirect('/main/')
+        return redirect('/main/')
 
+def find_selected_portal(request):
+    for i in range(len(list_portals)):
+        if list_portals[i].get('name') == request.POST.get('portals'):
+            portal = list_portals[i]
+            return portal
 
 def delete_portal(request, id_portal):
     portal = Portal.objects.filter(pk=id_portal)

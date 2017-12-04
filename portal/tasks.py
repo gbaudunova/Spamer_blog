@@ -2,7 +2,7 @@ import logging
 from django.contrib import messages
 from grab import Grab, DataNotFound
 from grab.util.log import default_logging
-from portal.list_portals import list_portals
+from .list_portals import list_portals
 
 
 default_logging()
@@ -19,7 +19,7 @@ def auth_portal(portal, log_pass, request):
     try:
         url_login = portal['url_auth']
         GRAB.setup(timeout=10, connect_timeout=10)
-        GRAB.go(url_login, log_file='login.html')
+        GRAB.go(url_login, log_file='templates/grab/bug_auth.html')
         GRAB.doc.text_search(portal['auth_by'])
         try:
             GRAB.doc.set_input(portal['inp_login'], log_pass['login'])
@@ -48,7 +48,7 @@ def send_spam(input_data, portals):
             if str(portals[i]) == list_portals[p]['name']:
                 print(list_portals[p]['name'])
                 url_submit = list_portals[p]['url_submit']
-                GRAB.go(url_submit, log_file='submit.html')
+                GRAB.go(url_submit, log_file='templates/grab/bug_submit.html')
                 GRAB.doc.set_input(
                     list_portals[p]['inp_title'], input_data['title'])
                 GRAB.doc.set_input(
